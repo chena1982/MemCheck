@@ -14,5 +14,8 @@
 
 // TODO: reference additional headers your program requires here
 #include "Windows.h"
+
+#define INITGUID
+
 #include "Evntrace.h"
 #include "Evntcons.h"

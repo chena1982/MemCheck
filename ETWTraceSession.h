@@ -28,6 +28,8 @@ public:
 
 public:
 	bool Start();
+	bool StartKernel();
+
 	bool EnableProvider(const GUID& providerId, UCHAR level, ULONGLONG anyKeyword = 0, ULONGLONG allKeyword = 0);
 	bool OpenTrace(ITraceConsumer *pConsumer);
 	bool Process();
@@ -49,3 +51,4 @@ private:
 };
 
 VOID WINAPI EventRecordCallback(_In_ PEVENT_RECORD pEventRecord);
+ULONG WINAPI BufferRecordCallback(_In_ PEVENT_TRACE_LOGFILE Buffer);

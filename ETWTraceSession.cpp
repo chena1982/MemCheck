@@ -33,6 +33,30 @@ bool TraceSession::Start()
 	return (_status == ERROR_SUCCESS);
 }
 
+bool TraceSession::StartKernel()
+{
+	if (!_pSessionProperties) {
+		const size_t buffSize = sizeof(EVENT_TRACE_PROPERTIES) + (_tcslen(_szSessionName) + 1) * sizeof(TCHAR);
+		_pSessionProperties = reinterpret_cast<EVENT_TRACE_PROPERTIES *>(malloc(buffSize));
+		ZeroMemory(_pSessionProperties, buffSize);
+
+		_pSessionProperties->Wnode.BufferSize = buffSize;
+		_pSessionProperties->Wnode.ClientContext = 1;
+		_pSessionProperties->Wnode.Flags = WNODE_FLAG_TRACED_GUID;
+		_pSessionProperties->Wnode.Guid = SystemTraceControlGuid;
+
+		_pSessionProperties->EnableFlags = EVENT_TRACE_FLAG_VIRTUAL_ALLOC;
+
+		_pSessionProperties->LogFileMode = EVENT_TRACE_REAL_TIME_MODE;
+		_pSessionProperties->LoggerNameOffset = sizeof(EVENT_TRACE_PROPERTIES);
+	}
+
+	// Create the trace session.
+	_status = StartTrace(&hSession, _szSessionName, _pSessionProperties);
+
+	return (_status == ERROR_SUCCESS);
+}
+
 bool TraceSession::EnableProvider(const GUID& providerId, UCHAR level, ULONGLONG anyKeyword, ULONGLONG allKeyword)
 {
 	_status = EnableTraceEx2(hSession, &providerId, EVENT_CONTROL_CODE_ENABLE_PROVIDER, level, anyKeyword, allKeyword, 0, NULL);
@@ -48,7 +72,9 @@ bool TraceSession::OpenTrace(ITraceConsumer *pConsumer)
 	_logFile.LoggerName = _szSessionName;
 	_logFile.ProcessTraceMode = PROCESS_TRACE_MODE_REAL_TIME | PROCESS_TRACE_MODE_EVENT_RECORD;
 	_logFile.EventRecordCallback = &EventRecordCallback;
+	_logFile.BufferCallback = &BufferRecordCallback;
 	_logFile.Context = pConsumer;
+	_logFile.IsKernelTrace = TRUE;
 
 	_hTrace = ::OpenTrace(&_logFile);
 	return (_hTrace != 0);
@@ -97,6 +123,11 @@ VOID WINAPI EventRecordCallback(_In_ PEVENT_RECORD pEventRecord)
 	reinterpret_cast<ITraceConsumer *>(pEventRecord->UserContext)->OnEventRecord(pEventRecord);
 }
 
+
+ULONG WINAPI BufferRecordCallback(_In_ PEVENT_TRACE_LOGFILE Buffer)
+{
+	return TRUE;
+}
 
 
 

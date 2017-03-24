@@ -29,5 +29,6 @@
 *.app
 
 Debug
+ipch
 *.suo
 *.sdf
