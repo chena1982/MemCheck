@@ -19,6 +19,12 @@ public:
 	virtual void OnEventRecord(PEVENT_RECORD eventPointer);
 };
 
+enum TraceType
+{
+	Kernel = 0,
+	Heap
+};
+
 class TraceSession
 {
 
@@ -27,10 +33,9 @@ public:
 	~TraceSession();
 
 public:
-	bool Start();
-	bool StartKernel();
+	bool Start(bool isKernel);
 
-	bool EnableProvider(const GUID& providerId, UCHAR level, ULONGLONG anyKeyword = 0, ULONGLONG allKeyword = 0);
+	bool EnableProvider(TraceType type, UCHAR level, ULONGLONG anyKeyword = 0, ULONGLONG allKeyword = 0);
 	bool OpenTrace(ITraceConsumer *pConsumer);
 	bool Process();
 	bool CloseTrace();

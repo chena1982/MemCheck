@@ -27,6 +27,9 @@
     <ClInclude Include="ETWTraceSession.h">
       <Filter>ETW</Filter>
     </ClInclude>
+    <ClInclude Include="ETWTraceSessionManager.h">
+      <Filter>ETW</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -36,6 +39,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ETWTraceSession.cpp">
+      <Filter>ETW</Filter>
+    </ClCompile>
+    <ClCompile Include="ETWTraceSessionManager.cpp">
       <Filter>ETW</Filter>
     </ClCompile>
   </ItemGroup>

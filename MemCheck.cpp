@@ -5,28 +5,34 @@
 
 #include "ETWTraceSession.h"
 
+
+
+
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	ITraceConsumer * pConsumer = new NodeTraceConsumer();
 
-	LPTSTR szSessionName = KERNEL_LOGGER_NAME;
+	//LPTSTR szSessionName = KERNEL_LOGGER_NAME;
+	LPTSTR szSessionName = L"Heap Trace Provider";
 
 
 	TraceSession* pSession = new TraceSession(szSessionName);
-	if (!pSession->StartKernel()) {
+	if (!pSession->Start(false)) {
 		if (pSession->Status() == ERROR_ALREADY_EXISTS) {
-			if (!pSession->Stop() || !pSession->StartKernel()) {
+			if (!pSession->Stop() || !pSession->Start(false)) {
 				wprintf(L"Error in trace session %d", pSession->Status());
 				goto cleanup;
 			}
 		}
 	}
 
-	/*if (!pSession->EnableProvider(SystemTraceControlGuid, TRACE_LEVEL_VERBOSE, 0x4000, 0))
+
+	if (!pSession->EnableProvider(Heap, TRACE_LEVEL_VERBOSE))
 	{
 		wprintf(L"Error in enabling provider %d", pSession->Status());
 		goto cleanup;
-	}*/
+	}
 
 	if (!pSession->OpenTrace(pConsumer))
 	{

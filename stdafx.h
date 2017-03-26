@@ -19,3 +19,4 @@
 
 #include "Evntrace.h"
 #include "Evntcons.h"
+#include "Evntprov.h"
