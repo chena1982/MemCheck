@@ -14,7 +14,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	ITraceConsumer * pConsumer = new NodeTraceConsumer();
 
 	//LPTSTR szSessionName = KERNEL_LOGGER_NAME;
-	LPTSTR szSessionName = L"Heap Trace Provider";
+	LPTSTR szSessionName = L"MemCheck";
 
 
 	TraceSession* pSession = new TraceSession(szSessionName);

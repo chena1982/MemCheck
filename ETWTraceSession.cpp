@@ -22,6 +22,7 @@ GUID guid[] = {
 
 TraceSession::TraceSession(LPCTSTR szSessionName) : _szSessionName(_tcsdup(szSessionName))
 {
+    hSession = NULL;
 }
 
 TraceSession::~TraceSession(void)
@@ -62,7 +63,9 @@ bool TraceSession::Start(bool isKernel)
 			_pSessionProperties->Wnode.BufferSize = buffSize;
 			_pSessionProperties->Wnode.ClientContext = 1;
 
-			_pSessionProperties->LogFileMode = EVENT_TRACE_REAL_TIME_MODE;
+
+
+            _pSessionProperties->LogFileMode = EVENT_TRACE_REAL_TIME_MODE | PROCESS_TRACE_MODE_EVENT_RECORD;
 			_pSessionProperties->LoggerNameOffset = sizeof(EVENT_TRACE_PROPERTIES);
 		}
 	}
@@ -104,10 +107,8 @@ bool TraceSession::EnableProvider(TraceType type, UCHAR level, ULONGLONG anyKeyw
 	traceParam.Version = ENABLE_TRACE_PARAMETERS_VERSION_2;
 	traceParam.EnableProperty = EVENT_ENABLE_PROPERTY_STACK_TRACE;
 	traceParam.SourceId = guid[(int)type];
-	traceParam.EnableFilterDesc = &filterDesc;
-	traceParam.FilterDescCount = 1;
-
-
+	//traceParam.EnableFilterDesc = &filterDesc;
+	//traceParam.FilterDescCount = 1;
 	_status = EnableTraceEx2(hSession, &guid[(int)type], EVENT_CONTROL_CODE_ENABLE_PROVIDER, level, anyKeyword, allKeyword, 0, &traceParam);
 
 	delete [] filterId;
@@ -153,6 +154,8 @@ bool TraceSession::DisableProvider(const GUID& providerId)
 bool TraceSession::Stop()
 {
 	_status = ControlTrace(hSession, _szSessionName, _pSessionProperties, EVENT_TRACE_CONTROL_STOP);
+    hSession = NULL;
+
 	delete _pSessionProperties;
 	_pSessionProperties = NULL;
 
